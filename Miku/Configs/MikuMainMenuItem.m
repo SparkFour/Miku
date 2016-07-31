@@ -17,6 +17,7 @@ typedef NS_ENUM(NSUInteger, MenuItemType) {
     kMenuItemTypeEnableMusicDefault,
     kMenuItemTypeEnableMusicNormal,
     kMenuItemTypeEnableMusicMute,
+    kMenuItemTypeEnableNextMusic,
 };
 
 
@@ -28,6 +29,8 @@ typedef NS_ENUM(NSUInteger, MenuItemType) {
 @property (nonatomic, strong) NSMenuItem *musicDefaultMenuItem;
 @property (nonatomic, strong) NSMenuItem *musicNormalMenuItem;
 @property (nonatomic, strong) NSMenuItem *musicMuteMenuItem;
+
+@property (nonatomic, strong) NSMenuItem *nextMusicMenuItem;
 
 @end
 
@@ -54,6 +57,11 @@ typedef NS_ENUM(NSUInteger, MenuItemType) {
         self.keepDancingMenuItem.state = configManager.isEnableKeepDancing;
         self.keepDancingMenuItem.enabled = configManager.isEnablePlugin;
         [configMenu addItem:self.keepDancingMenuItem];
+        
+        
+        self.nextMusicMenuItem = [self menuItemWithTitle:@"next music" type:kMenuItemTypeEnableNextMusic];
+        self.nextMusicMenuItem.enabled = configManager.isEnablePlugin;
+        [configMenu addItem:self.nextMusicMenuItem];
         
         // MusicType Menu Item Begin
         
@@ -96,19 +104,25 @@ typedef NS_ENUM(NSUInteger, MenuItemType) {
     menuItem.state = NSOffState;
     menuItem.target = self;
     menuItem.action = @selector(clickMenuItem:);
+    //
+    if (type==kMenuItemTypeEnableNextMusic) {
+        [menuItem setKeyEquivalent:@"z"];
+        [menuItem setKeyEquivalentModifierMask:NSControlKeyMask];
+    }
     return menuItem;
 }
 
 
 - (void)clickMenuItem:(NSMenuItem *)menuItem
 {
-    menuItem.state = !menuItem.state;
     
     MikuConfigManager *configManager = [MikuConfigManager sharedManager];
     MikuWebView *mikuWebView = [Miku sharedPlugin].mikuDragView.mikuWebView;
-    
     MenuItemType type = menuItem.tag;
     
+    if (type!=kMenuItemTypeEnableNextMusic)
+        menuItem.state = !menuItem.state;
+
     switch (type) {
             
         case kMenuItemTypeEnablePlugin:
@@ -116,6 +130,7 @@ typedef NS_ENUM(NSUInteger, MenuItemType) {
             [Miku sharedPlugin].enablePlugin = configManager.isEnablePlugin;
             self.keepDancingMenuItem.enabled = configManager.isEnablePlugin;
             self.musicMenuItem.enabled = configManager.isEnablePlugin;
+            self.nextMusicMenuItem.enabled = configManager.isEnablePlugin;
             break;
             
         case kMenuItemTypeEnableKeepDancing:
@@ -129,7 +144,7 @@ typedef NS_ENUM(NSUInteger, MenuItemType) {
             self.musicNormalMenuItem.state = NSOffState;
             self.musicMuteMenuItem.state = NSOffState;
             break;
-            
+        
         case kMenuItemTypeEnableMusicNormal:
             configManager.musicType = MikuMusicTypeNormal;
             [mikuWebView setMusicType:configManager.musicType];
@@ -142,6 +157,10 @@ typedef NS_ENUM(NSUInteger, MenuItemType) {
             [mikuWebView setMusicType:configManager.musicType];
             self.musicDefaultMenuItem.state = NSOffState;
             self.musicNormalMenuItem.state = NSOffState;
+            break;
+            
+        case kMenuItemTypeEnableNextMusic:
+            [mikuWebView play_next];
             break;
     }
 }

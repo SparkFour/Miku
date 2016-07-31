@@ -19,6 +19,7 @@ typedef NS_ENUM(NSUInteger, MikuMusicType) {
 
 - (void)play;
 - (void)pause;
+- (void)play_next;
 - (void)setPlayingTime:(NSInteger)seconds;
 - (void)setIsKeepDancing:(BOOL)isKeepDancing;
 - (void)setMusicType:(MikuMusicType)musicType;

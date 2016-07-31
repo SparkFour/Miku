@@ -198,6 +198,13 @@ Control.prototype = {
         play = false;
         audio.pause();
     },
+    play_next: function(){
+        play = true;
+        playIndex = parseInt(Math.random() * playList.length, 10);
+        audio.src = playList[playIndex];
+        audio.play();
+    },
+
     mute: function(flag) {
         mute = flag;
     },

@@ -62,6 +62,13 @@
     [self stringByEvaluatingJavaScriptFromString:@"control.pause()"];
 }
 
+/**
+ *  播放下一首
+ */
+- (void)play_next
+{
+    [self stringByEvaluatingJavaScriptFromString:@"control.play_next()"];
+}
 
 /**
  *  设置播放时间
